@@ -57,6 +57,11 @@ public class AutoTestbot extends LinearOpMode {
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
+        //setting target later changable
+        gyro.target_Angle = (gyro.angle.firstAngle+360)%360;
+        telemetry.addData(">", "Target Angle Set");    //
+        telemetry.update();
+        //confirm
         telemetry.addData(">", "Robot Ready.");    //
         telemetry.update();
 

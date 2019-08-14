@@ -28,7 +28,7 @@ public class GyroMath {
     double target_Angle = 0;
     double prev_angle_error, angle_error;
 
-    //distance variables
+    //distance variables - LATER
     double distance = 0;
     double prev_dist_error, dist_error;
     double target_Distance = 1;
