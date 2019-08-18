@@ -28,6 +28,7 @@ public class GyroMath {
     double target_Angle = 0;
     double prev_angle_error, angle_error;
 
+
     //distance variables - LATER
     double distance = 0;
     double prev_dist_error, dist_error;
@@ -38,9 +39,11 @@ public class GyroMath {
     double period;
 
     //variables for the PID systems
-    double kP = 1;
+    double kP = 0.2;
     double kI = 0.2;
-    double kD = 10;
+    double kD = 1;
+
+    double maxPID = 60;
 
     //actual PID outputs
     double PID_p, PID_i, PID_d, PID_total;
@@ -80,6 +83,7 @@ public class GyroMath {
             prev_angle_error = angle_error;
             //send back value
         }
+        PID_total = PID_total/maxPID;
         return PID_total;
     }
 
