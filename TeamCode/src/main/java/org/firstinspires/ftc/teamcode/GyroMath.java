@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 public class GyroMath {
     //define class members
     ElapsedTime runtime = new ElapsedTime();
-    public HardwareTestbot myRobot;
+    private HardwareTestbot myRobot;
 
     //declaration of objects
     public Orientation angle;
@@ -51,7 +51,7 @@ public class GyroMath {
     public GyroMath(){
     }
 
-    public void init(HardwareTestbot robot){
+    public void initDrive(HardwareTestbot robot){
         myRobot = robot;
         time = runtime.seconds();
     }
