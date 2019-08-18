@@ -66,7 +66,8 @@ public class GyroMath {
         globalAngle = (angle.firstAngle+360)%360;
         return globalAngle;
     }
-    public double calcAngle(){
+    public double calcAngle(int target){
+        target_Angle = target;
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
             angle_error = target_Angle - getAngle();
