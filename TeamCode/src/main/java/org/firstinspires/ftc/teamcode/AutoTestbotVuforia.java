@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 @Autonomous(name="TestofVuforia", group="testbot")
 @Disabled
 public class AutoTestbotVuforia extends LinearOpMode {
@@ -20,8 +22,8 @@ public class AutoTestbotVuforia extends LinearOpMode {
     GyroMath gyro = new GyroMath();
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
 
-    double PID_power;
-
+    private double PID_power;
+    private int prevTarget;
     //vuforia power
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String VUFORIA_KEY = " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
@@ -32,49 +34,17 @@ public class AutoTestbotVuforia extends LinearOpMode {
     public void runOpMode() {
         robot.initDrive(this);
         gyro.initDrive(robot);
-
-        // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
-        robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         //start up Vuforia Engine
         initVuforia();
-        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-            initTfod();
-        } else {
-            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
-        }
-        // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-        //setting target later changable
-        gyro.target_Angle = (gyro.angle.firstAngle + 360) % 360;
-        telemetry.addData(">", "Target Angle Set");    //
-        telemetry.update();
-        //confirm
-        telemetry.addData(">", "Robot Ready.");    //
-        telemetry.update();
-
-        robot.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", gyro.getAngle());
-            telemetry.update();
-        }
-
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) { initTfod(); }
+        else { telemetry.addData("Sorry!", "This device is not compatible with TFOD"); }
+        while (!isStarted()) { telemetry.addData(">", "Robot Heading = %d", gyro.getAngle());telemetry.update(); }
         waitForStart();
         while (isStarted()) {
-            PID_power = gyro.calcAngle(0);
-            robot.leftDrive.setPower(PID_power);
-            robot.rightDrive.setPower(PID_power);
-            telemetry.addLine("Robot Error = %d" + gyro.angle_error);
             telemetry.addLine("Robot Heading = %d" + gyro.getAngle());
             telemetry.update();
             //block target calcs
-            if (tfod != null) {
-                tfod.activate();
-            }
+            if (tfod != null) { tfod.activate();}
             if (tfod != null) {
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
@@ -84,6 +54,7 @@ public class AutoTestbotVuforia extends LinearOpMode {
                         for (Recognition recognition : updatedRecognitions) {
                             if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                                 goldMineralX = (int) recognition.getLeft();
+                                gyroOrien(visionCalc(goldMineralX));
                             }
                         }
                     }
@@ -93,6 +64,19 @@ public class AutoTestbotVuforia extends LinearOpMode {
             telemetry.addData("Path", "Complete");
             telemetry.update();
         }
+    }
+    private int visionCalc(int objX){
+        int target = 0;
+        target = (((objX/1080)*(84))-42);
+        return target;
+    }
+    private void gyroOrien(int target){
+        if(abs(target - prevTarget)> 15){
+            PID_power = gyro.calcAngle(target);
+            robot.leftDrive.setPower(-PID_power);
+            robot.rightDrive.setPower(PID_power);
+        }
+        prevTarget = target;
     }
     //just vuforia engine starting
     private void initVuforia() {
