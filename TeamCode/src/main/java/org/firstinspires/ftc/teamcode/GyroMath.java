@@ -39,14 +39,12 @@ public class GyroMath {
     double period;
 
     //variables for the PID systems
-    double kP = 0.2;
+    double kP = 0.005;
     double kI = 0.2;
     double kD = 1;
 
-    double maxPID = 60;
-
     //actual PID outputs
-    double PID_p, PID_i, PID_d, PID_total;
+    double PID_p, PID_i = 0, PID_d = 0, PID_total;
 
     public GyroMath(){
     }
@@ -70,21 +68,20 @@ public class GyroMath {
         target_Angle = target;
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
-            angle_error = target_Angle - getAngle();
+            angle_error = (target_Angle - getAngle())% 360;
             PID_p = kP * angle_error;
             double angle_Derv = angle_error - prev_angle_error;
             PID_d = kD*(angle_Derv/period);
 
-            if(-50 < angle_error && angle_error < 50){
+            if(-50 > angle_error && angle_error < 50){
                 PID_i = PID_i + (kI * angle_error);
             }else{
                 PID_i = 0;
             }
-            PID_total = PID_p + PID_i + PID_d;
+            PID_total = PID_p; //+ PID_i + PID_d;
             prev_angle_error = angle_error;
             //send back value
         }
-        PID_total = PID_total/maxPID;
         return PID_total;
     }
 

@@ -45,8 +45,8 @@ public class AutoTestbot extends LinearOpMode {
         //run loop while button pressed
         while (isStarted()) {
             PID_power = gyro.calcAngle(0);
-            robot.leftDrive.setPower(-PID_power);
-            robot.rightDrive.setPower(PID_power);
+            robot.leftDrive.setPower(PID_power);
+            robot.rightDrive.setPower(-PID_power);
             telemetry.addLine("Robot Error = %d" + gyro.angle_error);
             telemetry.addLine("Robot Heading = %d" + gyro.getAngle());
             telemetry.update();
