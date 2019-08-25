@@ -68,7 +68,8 @@ public class GyroMath {
         target_Angle = target;
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
-            angle_error = (target_Angle - getAngle())% 360;
+            //CONVENTIONS USED COUNTERCLOCKWISE IS POSITIVE TURN ----- CLOCKWISE IS NEGATIVE TURN
+            angle_error = ((getAngle() - target_Angle)% 360);
             PID_p = kP * angle_error;
             double angle_Derv = angle_error - prev_angle_error;
             PID_d = kD*(angle_Derv/period);
@@ -78,11 +79,15 @@ public class GyroMath {
             }else{
                 PID_i = 0;
             }
-            PID_total = PID_p; //+ PID_i + PID_d;
+            if(angle_error > 5){
+                PID_total = PID_p; //+ PID_i + PID_d;
+            }else{
+                PID_total = 0;
+            }
             prev_angle_error = angle_error;
             //send back value
         }
-        return PID_total;
+        return PID_total * ((180 - angle_error)/(Math.abs(180-angle_error)));
     }
 
 }

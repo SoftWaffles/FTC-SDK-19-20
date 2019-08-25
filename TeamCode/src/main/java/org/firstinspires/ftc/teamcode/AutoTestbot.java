@@ -19,6 +19,7 @@ public class AutoTestbot extends LinearOpMode {
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
 
     double PID_power;
+    boolean PIDOn;
 
 
     @Override
@@ -44,12 +45,44 @@ public class AutoTestbot extends LinearOpMode {
         waitForStart();
         //run loop while button pressed
         while (isStarted()) {
-            PID_power = gyro.calcAngle(0);
-            robot.leftDrive.setPower(PID_power);
-            robot.rightDrive.setPower(-PID_power);
+            //CONVENTIONS USED COUNTERCLOCKWISE IS POSITIVE TURN ----- CLOCKWISE IS NEGATIVE TURN
+            if(PIDorRegr(gamepad1.a,gamepad1.b)){
+                PID_power = gyro.calcAngle(0);
+                move2D(0,0,PID_power);
+            }else{
+                double expoFac = gyro.calcAngle(0);
+                if(gyro.angle_error > 8){
+                    expoFac = Math.cbrt((5000*(Math.abs(gyro.angle_error)-45))) + 70;
+                    expoFac = (180 - gyro.angle_error/Math.abs(180 - gyro.angle_error))*(expoFac/160);
+                    move2D(0,0,Range.clip(PID_power,-0.9,0.9));
+                }
+            }
             telemetry.addLine("Robot Error = %d" + gyro.angle_error);
             telemetry.addLine("Robot Heading = %d" + gyro.getAngle());
             telemetry.update();
+        }
+    }
+
+    public boolean PIDorRegr(boolean a, boolean b){
+        if(a = true){
+            PIDOn = true;
+            telemetry.addLine("Robot Correction Set to PID" );
+            telemetry.update();
+        }else if(b = true){
+            PIDOn = false;
+            telemetry.addLine("Robot Correction Set to Regression" );
+            telemetry.update();
+        }
+        return PIDOn;
+    }
+
+    public void move2D(double forw, double side, double spin){
+        double LPow = forw + spin;
+        double RPow = forw - spin;
+        robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
+        robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
+        if(Math.abs(side) >= 0.3){
+            robot.midDrive.setPower(Range.clip(side, -0.90,0.90));
         }
     }
 }

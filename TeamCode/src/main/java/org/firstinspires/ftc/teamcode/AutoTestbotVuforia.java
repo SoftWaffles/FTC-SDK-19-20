@@ -72,9 +72,6 @@ public class AutoTestbotVuforia extends LinearOpMode {
     }
     private void gyroOrien(int target){
         if(abs(target - prevTarget)> 15){
-            PID_power = gyro.calcAngle(target);
-            robot.leftDrive.setPower(-PID_power);
-            robot.rightDrive.setPower(PID_power);
         }
         prevTarget = target;
     }

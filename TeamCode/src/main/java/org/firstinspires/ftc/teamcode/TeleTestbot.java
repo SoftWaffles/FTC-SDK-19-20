@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="TestofDrive", group="testbot")
 //@Disabled
@@ -22,13 +23,11 @@ public class TeleTestbot extends LinearOpMode {
         while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(5); idle(); }
         telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
         telemetry.update();
-        sleep(1000);
         //-------------------- CHANGEABLE----------------------------------
         gyro.target_Angle = 0;
         //-----------------------------------------------------------------
         telemetry.addData(">", "Target Angle Set To: " + gyro.target_Angle);
         telemetry.update();
-        sleep(1000);
         //confirm
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
@@ -37,9 +36,7 @@ public class TeleTestbot extends LinearOpMode {
         waitForStart();
         //run loop while button pressed
         while (isStarted()) {
-            robot.leftDrive.setPower(gamepad1.left_stick_y+gamepad1.right_stick_x);
-            robot.rightDrive.setPower(gamepad1.left_stick_y+gamepad1.right_stick_x);
-            robot.midDrive.setPower(gamepad1.left_stick_x);
+            move2D(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             telemetry.addLine("Robot Mid Translation = " + midTranslation() + " || " + robot.TOTAL_MOTOR_POS);
             telemetry.addLine("Robot Error = " + gyro.angle_error);
             telemetry.addLine("Robot Heading = " + gyro.getAngle());
@@ -53,6 +50,15 @@ public class TeleTestbot extends LinearOpMode {
         robot.PREV_MOTOR_POS = robot.TOTAL_MOTOR_POS;
         mid_Trans = robot.TOTAL_MOTOR_POS/robot.COUNTS_PER_INCH;
         return mid_Trans;
+    }
+    public void move2D(double forw, double side, double spin){
+        double LPow = forw + spin;
+        double RPow = forw - spin;
+        robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
+        robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
+        if(Math.abs(side) >= 0.3){
+            robot.midDrive.setPower(Range.clip(side, -0.90,0.90));
+        }
     }
 }
 
