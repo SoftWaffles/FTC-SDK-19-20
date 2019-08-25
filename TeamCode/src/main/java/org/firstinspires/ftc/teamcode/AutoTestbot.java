@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 @Autonomous(name="TestOfPID", group="testbot")
 //@Disabled
@@ -20,7 +19,6 @@ public class AutoTestbot extends LinearOpMode {
 
     double PID_power;
     boolean PIDOn;
-
 
     @Override
     public void runOpMode() {
@@ -45,13 +43,14 @@ public class AutoTestbot extends LinearOpMode {
         waitForStart();
         //run loop while button pressed
         while (isStarted()) {
-            //CONVENTIONS USED COUNTERCLOCKWISE IS POSITIVE TURN ----- CLOCKWISE IS NEGATIVE TURN
+            //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
             if(PIDorRegr(gamepad1.a,gamepad1.b)){
                 PID_power = gyro.calcAngle(0);
                 move2D(0,0,PID_power);
             }else{
+                //simple cube root function to get motor power curve expoFac is just holding variable for power
                 double expoFac = gyro.calcAngle(0);
-                if(gyro.angle_error > 8){
+                if(Math.abs(gyro.angle_error) > 8){
                     expoFac = Math.cbrt((5000*(Math.abs(gyro.angle_error)-45))) + 70;
                     expoFac = (180 - gyro.angle_error/Math.abs(180 - gyro.angle_error))*(expoFac/160);
                     move2D(0,0,Range.clip(PID_power,-0.9,0.9));
@@ -62,7 +61,7 @@ public class AutoTestbot extends LinearOpMode {
             telemetry.update();
         }
     }
-
+    //set the respective motion control math
     public boolean PIDorRegr(boolean a, boolean b){
         if(a = true){
             PIDOn = true;
@@ -75,7 +74,7 @@ public class AutoTestbot extends LinearOpMode {
         }
         return PIDOn;
     }
-
+    //method for movement
     public void move2D(double forw, double side, double spin){
         double LPow = forw + spin;
         double RPow = forw - spin;

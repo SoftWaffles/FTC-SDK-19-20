@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.media.MediaPlayer;
+import android.view.View;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareTestbot
 {
     //define opmode members
+
     private LinearOpMode myOpMode;
     private ElapsedTime period  = new ElapsedTime();
     //access instruments of Hub
@@ -18,12 +22,12 @@ public class HardwareTestbot
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
     public DcMotor  midDrive    = null;
-
-    static double           PREV_MOTOR_POS          = 0;
-    static double           TOTAL_MOTOR_POS         = 0;
-    static final double     COUNTS_PER_MOTOR_REV    = 1220 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    //motor monitoring
+    double                  PREV_MOTOR_POS          = 0;
+    double                  TOTAL_MOTOR_POS         = 0;
+    private static final double     COUNTS_PER_MOTOR_REV    = 1220 ;    // eg: TETRIX Motor Encoder
+    private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES * 3.1415);
 
     public HardwareTestbot(){

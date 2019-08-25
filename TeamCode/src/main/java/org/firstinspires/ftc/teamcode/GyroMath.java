@@ -16,60 +16,42 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class GyroMath {
     //define class members
-    ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
     private HardwareTestbot myRobot;
-
     //declaration of objects
-    public Orientation angle;
+    private Orientation angle;
     public Acceleration gravity;
-
     //angle variables
-    public double globalAngle;
+    private double globalAngle;
     double target_Angle = 0;
-    double prev_angle_error, angle_error;
-
-
+    private double prev_angle_error;
+    double angle_error;
     //distance variables - LATER
     double distance = 0;
     double prev_dist_error, dist_error;
     double target_Distance = 1;
-
     //timing
-    double elaspsedTime, time, timePrev;
-    double period;
-
+    private double elaspsedTime, time, timePrev;
+    private double period;
     //variables for the PID systems
     double kP = 0.005;
     double kI = 0.2;
     double kD = 1;
-
     //actual PID outputs
     double PID_p, PID_i = 0, PID_d = 0, PID_total;
 
-    public GyroMath(){
-    }
+    public GyroMath() { }
 
-    public void initDrive(HardwareTestbot robot){
-        myRobot = robot;
-        time = runtime.seconds();
+    public void initDrive(HardwareTestbot robot) { myRobot = robot;
+    time = runtime.seconds();
     }
-    void resetAngle()
-    {
-        angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        globalAngle = 0;
-    }
-    double getAngle()
-    {
-        Orientation angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        globalAngle = (angle.firstAngle+360)%360;
-        return globalAngle;
-    }
+    //PID Math given target
     public double calcAngle(int target){
         target_Angle = target;
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
-            //CONVENTIONS USED COUNTERCLOCKWISE IS POSITIVE TURN ----- CLOCKWISE IS NEGATIVE TURN
-            angle_error = ((getAngle() - target_Angle)% 360);
+            //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
+            angle_error = (getAngle() - convertGlobalAngle(target_Angle));
             PID_p = kP * angle_error;
             double angle_Derv = angle_error - prev_angle_error;
             PID_d = kD*(angle_Derv/period);
@@ -87,7 +69,28 @@ public class GyroMath {
             prev_angle_error = angle_error;
             //send back value
         }
-        return PID_total * ((180 - angle_error)/(Math.abs(180-angle_error)));
+        return PID_total;
     }
-
+    //make current heading the zero
+    void resetAngle() { angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        globalAngle = 0;
+    }
+    //reading angle objects z axis
+    double getAngle() {
+        Orientation angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angle.firstAngle;
+    }
+    //converting heading to global angle
+    double getGlobalAngle() {
+        globalAngle = (angle.firstAngle+360)%360;
+        return globalAngle;
+    }
+    //convert target to hemisphere angle
+    double convertGlobalAngle(double target){
+        double hemiTarget = target;
+        if(target > 179){
+            hemiTarget = ((target % 180)-180);
+        }
+        return hemiTarget;
+    }
 }
