@@ -30,9 +30,6 @@ public class AutoTestbot extends LinearOpMode {
         while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
         telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
         telemetry.update();
-        //-------------------- CHANGEABLE----------------------------------
-        gyro.target_Angle = 0;
-        //-----------------------------------------------------------------
         telemetry.addData(">", "Target Angle Set");
         telemetry.update();
         //confirm
