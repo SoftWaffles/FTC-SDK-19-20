@@ -30,8 +30,6 @@ public class AutoTestbot extends LinearOpMode {
         while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
         telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
         telemetry.update();
-        telemetry.addData(">", "Target Angle Set");
-        telemetry.update();
         //confirm
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
@@ -44,6 +42,8 @@ public class AutoTestbot extends LinearOpMode {
             if(PIDorRegr(gamepad1.a,gamepad1.b)){
                 PID_power = gyro.calcAngle(0);
                 move2D(0,0,PID_power);
+                robot.leftDrive.setPower(PID_power);
+                robot.rightDrive.setPower(-PID_power);
             }else{
                 //simple cube root function to get motor power curve expoFac is just holding variable for power
                 double expoFac = gyro.calcAngle(0);

@@ -68,9 +68,7 @@ public class TeleTestbot extends LinearOpMode {
         double RPow = forw - spin;
         robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
         robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
-        if(Math.abs(side) >= 0.3){
-            robot.midDrive.setPower(Range.clip(side, -0.90,0.90));
-        }
+        robot.midDrive.setPower(Range.clip(side, -0.90,0.90));
     }
     public void initJazz(){
         dollarmenuID = hardwareMap.appContext.getResources().getIdentifier("dollarmenu", "raw", hardwareMap.appContext.getPackageName());

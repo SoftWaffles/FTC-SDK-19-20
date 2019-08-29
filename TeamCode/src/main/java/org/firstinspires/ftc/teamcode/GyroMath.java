@@ -46,7 +46,7 @@ public class GyroMath {
     time = runtime.seconds();
     }
     //PID Math given target
-    public double calcAngle(int target){
+    public double calcAngle(double target){
         target_Angle = target;
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
