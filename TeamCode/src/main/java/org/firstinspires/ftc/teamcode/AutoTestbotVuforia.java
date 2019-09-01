@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -15,7 +16,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 @Autonomous(name="TestofVuforia", group="testbot")
-@Disabled
+//@Disabled
 public class AutoTestbotVuforia extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -71,9 +72,17 @@ public class AutoTestbotVuforia extends LinearOpMode {
         return target;
     }
     private void gyroOrien(int target){
-        if(abs(target - prevTarget)> 15){
+        double pow = gyro.calcAngle((180+target)%180);
+        move2D(0,0,pow);
+    }
+    private void move2D(double forw, double side, double spin){
+        double LPow = forw + spin;
+        double RPow = forw - spin;
+        robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
+        robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
+        if(Math.abs(side) >= 0.3){
+            robot.midDrive.setPower(Range.clip(side, -0.90,0.90));
         }
-        prevTarget = target;
     }
     //just vuforia engine starting
     private void initVuforia() {
@@ -82,7 +91,6 @@ public class AutoTestbotVuforia extends LinearOpMode {
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
-
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
