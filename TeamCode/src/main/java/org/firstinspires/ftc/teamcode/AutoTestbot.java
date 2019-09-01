@@ -39,37 +39,14 @@ public class AutoTestbot extends LinearOpMode {
         //run loop while button pressed
         while (isStarted()) {
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
-            if(PIDorRegr(gamepad1.a,gamepad1.b)){
-                PID_power = gyro.calcAngle(0);
-                move2D(0,0,PID_power);
-                robot.leftDrive.setPower(PID_power);
-                robot.rightDrive.setPower(-PID_power);
-            }else{
-                //simple cube root function to get motor power curve expoFac is just holding variable for power
-                double expoFac = gyro.calcAngle(0);
-                if(Math.abs(gyro.angle_error) > 8){
-                    expoFac = Math.cbrt((5000*(Math.abs(gyro.angle_error)-45))) + 70;
-                    expoFac = (180 - gyro.angle_error/Math.abs(180 - gyro.angle_error))*(expoFac/160);
-                    move2D(0,0,Range.clip(PID_power,-0.9,0.9));
-                }
-            }
-            telemetry.addLine("Robot Error = %d" + gyro.angle_error);
-            telemetry.addLine("Robot Heading = %d" + gyro.getAngle());
+            PID_power = gyro.calcAngle(0);
+            move2D(0,0,PID_power);
+
+            telemetry.addLine("Robot Error = " + gyro.angle_error);
+            telemetry.addLine("Robot Heading = " + gyro.getAngle());
+            telemetry.addLine("Robot PID Correction = " + gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
             telemetry.update();
         }
-    }
-    //set the respective motion control math
-    public boolean PIDorRegr(boolean a, boolean b){
-        if(a = true){
-            PIDOn = true;
-            telemetry.addLine("Robot Correction Set to PID" );
-            telemetry.update();
-        }else if(b = true){
-            PIDOn = false;
-            telemetry.addLine("Robot Correction Set to Regression" );
-            telemetry.update();
-        }
-        return PIDOn;
     }
     //method for movement
     public void move2D(double forw, double side, double spin){

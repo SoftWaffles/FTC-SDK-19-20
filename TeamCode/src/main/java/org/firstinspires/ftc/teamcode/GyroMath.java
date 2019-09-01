@@ -51,8 +51,10 @@ public class GyroMath {
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
-            angle_error = (getAngle() - convertGlobalAngle(target_Angle));
+            angle_error = (getAngle() - convertToHemi(target_Angle));
             PID_p = kP * angle_error;
+            /*
+            THIS CODE IS FOR POSSIBLE FUTURE USE
             double angle_Derv = angle_error - prev_angle_error;
             PID_d = kD*(angle_Derv/period);
 
@@ -61,7 +63,8 @@ public class GyroMath {
             }else{
                 PID_i = 0;
             }
-            if(angle_error > 5){
+            */
+            if(Math.abs(angle_error) > 5){
                 PID_total = PID_p; //+ PID_i + PID_d;
             }else{
                 PID_total = 0;
@@ -82,11 +85,12 @@ public class GyroMath {
     }
     //converting heading to global angle
     double getGlobalAngle() {
+        Orientation angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         globalAngle = (angle.firstAngle+360)%360;
         return globalAngle;
     }
     //convert target to hemisphere angle
-    double convertGlobalAngle(double target){
+    double convertToHemi(double target){
         double hemiTarget = target;
         if(target > 179){
             hemiTarget = ((target % 180)-180);
