@@ -63,15 +63,6 @@ public class AutoTestbotVuforia extends LinearOpMode {
         }
         if (tfod != null) { tfod.shutdown(); }
     }
-    private int visionCalc(int objX){
-        int target = 0;
-        target = (((objX/1080)*(84))-42);
-        return target;
-    }
-    private void gyroOrien(int target){
-        double pow = gyro.calcAngle((180+target)%180);
-        move2D(0,0,pow);
-    }
     private void move2D(double forw, double side, double spin){
         double LPow = forw + spin;
         double RPow = forw - spin;

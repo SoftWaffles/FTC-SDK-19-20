@@ -69,7 +69,7 @@ public class TeleTestbot extends LinearOpMode {
     //movement along 2d and rotation
     private void move2D(double forw, double side, double spin) {
         if(globalSpin) {
-            spin = gyro.calcAngle(Math.atan2(gamepad1.right_stick_y,gamepad1.right_stick_x + 0.001));
+            spin = gyro.calcAngle(Math.toDegrees(Math.atan2(gamepad1.right_stick_y,gamepad1.right_stick_x + 0.001)));
         }
         double LPow = forw + spin;
         double RPow = forw - spin;
