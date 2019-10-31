@@ -6,13 +6,16 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="TestofDrive", group="testbot")
+@TeleOp(name="DRIVE-MODE", group="testbot")
 //@Disabled
 public class TeleTestbot extends LinearOpMode {
 
     /* Declare OpMode members. */
+    ElapsedTime runtime = new ElapsedTime();
     GyroMath gyro = new GyroMath();
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
     //jazz
@@ -22,8 +25,7 @@ public class TeleTestbot extends LinearOpMode {
     private int sevensixteythreeID;
     private boolean wasA = false;   // Gamepad button history variables
     private boolean WasB = false;
-    private boolean globalSpin = false;   // Gamepad button history variables
-    private boolean prevSpin = false;
+
     @Override
     public void runOpMode() {
         robot.initDrive(this);
@@ -49,46 +51,20 @@ public class TeleTestbot extends LinearOpMode {
         //run loop while button pressed
         while (isStarted()) {
             playJazz(gamepad1.a, gamepad1.b);
-            toggles(gamepad1.x);
             move2D(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            telemetry.addLine("Robot Mid Translation = " + midTranslation() + " || " + robot.TOTAL_MOTOR_POS);
             telemetry.addLine("Robot Error = " + gyro.angle_error);
             telemetry.addLine("Robot Heading = " + gyro.getAngle());
             telemetry.addLine("Robot PID Correction = " + gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
             telemetry.update();
         }
     }
-    //counting distance translated sideways
-    private double midTranslation(){
-        double mid_Trans = 0;
-        robot.TOTAL_MOTOR_POS += robot.midDrive.getCurrentPosition() - (robot.PREV_MOTOR_POS)%1220;
-        robot.PREV_MOTOR_POS = robot.TOTAL_MOTOR_POS;
-        mid_Trans = robot.TOTAL_MOTOR_POS/robot.COUNTS_PER_INCH;
-        return mid_Trans;
-    }
     //movement along 2d and rotation
     private void move2D(double forw, double side, double spin) {
-        if(globalSpin) {
-            spin = gyro.calcAngle(Math.toDegrees(Math.atan2(gamepad1.right_stick_y,gamepad1.right_stick_x + 0.001)));
-        }
         double LPow = forw + spin;
         double RPow = forw - spin;
         robot.leftDrive.setPower(Range.clip(LPow, -0.90, 0.90));
         robot.rightDrive.setPower(Range.clip(RPow, -0.90, 0.90));
         robot.midDrive.setPower(Range.clip(side, -0.90, 0.90));
-    }
-    //toggles to be used
-    private void toggles(boolean toggleX){
-        if(toggleX){
-            globalSpin = !globalSpin;
-        }
-        if(globalSpin){
-            telemetry.addData("Turning System Set : ", "GLOBAL");
-            telemetry.update();
-        }else{
-            telemetry.addData("Turning System Set : ", "LOCAL");
-            telemetry.update();
-        }
     }
     //initalizes sound play back
     private void initJazz(){

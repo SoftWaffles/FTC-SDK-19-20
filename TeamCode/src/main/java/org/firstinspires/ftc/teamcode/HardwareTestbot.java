@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.media.MediaPlayer;
-import android.view.View;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
