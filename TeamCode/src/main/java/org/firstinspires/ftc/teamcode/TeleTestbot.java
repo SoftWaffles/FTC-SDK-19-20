@@ -51,7 +51,8 @@ public class TeleTestbot extends LinearOpMode {
         //run loop while button pressed
         while (isStarted()) {
             playJazz(gamepad1.a, gamepad1.b);
-            move2D(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            move2D(gamepad1.left_stick_y, gamepad1.left_stick_x);
+            robot.armDrive.setPower(gamepad1.right_stick_y/2);
             telemetry.addLine("Robot Error = " + gyro.angle_error);
             telemetry.addLine("Robot Heading = " + gyro.getAngle());
             telemetry.addLine("Robot PID Correction = " + gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
@@ -59,12 +60,11 @@ public class TeleTestbot extends LinearOpMode {
         }
     }
     //movement along 2d and rotation
-    private void move2D(double forw, double side, double spin) {
+    private void move2D(double forw, double spin) {
         double LPow = forw + spin;
         double RPow = forw - spin;
         robot.leftDrive.setPower(Range.clip(LPow, -0.90, 0.90));
         robot.rightDrive.setPower(Range.clip(RPow, -0.90, 0.90));
-        robot.midDrive.setPower(Range.clip(side, -0.90, 0.90));
     }
     //initalizes sound play back
     private void initJazz(){

@@ -35,8 +35,8 @@ public class GyroMath {
     private double period;
     //variables for the PID systems
     double kP = 0.005;
-    double kI = 0.2;
-    double kD = 1;
+    double kI = 0.001;
+    double kD = 0.05;
     //actual PID outputs
     double PID_p, PID_i = 0, PID_d = 0, PID_total;
 
@@ -53,8 +53,7 @@ public class GyroMath {
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
             angle_error = (getAngle() - convertToHemi(target_Angle));
             PID_p = kP * angle_error;
-            /*
-            THIS CODE IS FOR POSSIBLE FUTURE USE
+
             double angle_Derv = angle_error - prev_angle_error;
             PID_d = kD*(angle_Derv/period);
 
@@ -63,7 +62,7 @@ public class GyroMath {
             }else{
                 PID_i = 0;
             }
-            */
+
             if(Math.abs(angle_error) > 5){
                 PID_total = PID_p; //+ PID_i + PID_d;
             }else{

@@ -18,7 +18,7 @@ public class HardwareTestbot
     BNO055IMU imu;
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
-    public DcMotor  midDrive    = null;
+    public DcMotor  armDrive    = null;
     //motor monitoring
     double                  PREV_MOTOR_POS          = 0;
     double                  TOTAL_MOTOR_POS         = 0;
@@ -46,19 +46,16 @@ public class HardwareTestbot
 
         leftDrive = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
-        midDrive = myOpMode.hardwareMap.get(DcMotor.class, "mid_drive");
+        armDrive = myOpMode.hardwareMap.get(DcMotor.class, "arm_drive");
 
         leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        midDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        midDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        midDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -66,6 +63,7 @@ public class HardwareTestbot
         // Set all motors to zero power
         leftDrive.setPower(0);
         rightDrive.setPower(0);
+        armDrive.setPower(0);
     }
  }
 

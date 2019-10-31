@@ -57,9 +57,6 @@ public class AutoTestbot extends LinearOpMode {
         double RPow = forw - spin;
         robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
         robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
-        if(Math.abs(side) >= 0.3){
-            robot.midDrive.setPower(Range.clip(side, -0.90,0.90));
-        }
     }
     public void encoderDrive(double Lspeed, double Rspeed, double Inches, double timeoutS, double rampup){
         double     COUNTS_PER_MOTOR_REV    = 560 ;    //Set for NevRest 20 drive. For 40's change to 1120. For 60's 1680
