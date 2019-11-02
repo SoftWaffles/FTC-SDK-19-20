@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="TestOfPID", group="testbot")
+@Autonomous(name="AUTO-DRIVE", group="testbot")
 //@Disabled
 public class AutoTestbot extends LinearOpMode {
 
