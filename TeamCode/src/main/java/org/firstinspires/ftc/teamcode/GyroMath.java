@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -24,7 +25,7 @@ public class GyroMath {
     //angle variables
     private double globalAngle;
     double target_Angle = 0;
-    private double prev_angle_error;
+    private double prev_angle_error = 0;
     double angle_error;
     //distance variables - LATER
     double distance = 0;
@@ -45,13 +46,27 @@ public class GyroMath {
     public void initDrive(HardwareTestbot robot) { myRobot = robot;
     time = runtime.seconds();
     }
+    public void gyroDrive(double forw, double target,int time){
+        while(Math.abs(getError(target)) > 1.5 && Math.abs(prev_angle_error) > 1.5){
+            move2D(0,calcPID(target));
+        }
+        runtime.reset();
+        while(runtime.seconds() < time){
+            double spin = 0;
+            if(getError(target)> 1.5){
+                spin = calcPID(target);
+            }
+            move2D(forw,spin);
+        }
+        move2D(0,0);
+    }
     //PID Math given target
-    public double calcAngle(double target){
+    public double calcPID(double target){
         target_Angle = target;
         if(runtime.seconds() > time + period){
             time = runtime.seconds();
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
-            angle_error = (getAngle() - convertToHemi(target_Angle));
+            angle_error = getError(target_Angle);
             PID_p = kP * angle_error;
 
             double angle_Derv = angle_error - prev_angle_error;
@@ -73,8 +88,12 @@ public class GyroMath {
         }
         return PID_total;
     }
+    double getError(double target){
+        return target - getGlobalAngle();
+    }
     //make current heading the zero
-    void resetAngle() { angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    void resetAngle() {
+        angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         globalAngle = 0;
     }
     //reading angle objects z axis
@@ -95,5 +114,11 @@ public class GyroMath {
             hemiTarget = ((target % 180)-180);
         }
         return hemiTarget;
+    }
+    public void move2D(double forw, double spin){
+        double LPow = forw + spin;
+        double RPow = forw - spin;
+        myRobot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
+        myRobot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
     }
 }

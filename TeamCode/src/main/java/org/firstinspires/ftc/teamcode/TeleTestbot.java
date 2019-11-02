@@ -58,6 +58,7 @@ public class TeleTestbot extends LinearOpMode {
             telemetry.addLine("Robot PID Correction = " + gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
             telemetry.update();
         }
+        move2D(0,0);
     }
     //movement along 2d and rotation
     private void move2D(double forw, double spin) {

@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Autonomous(name="TestOfPID", group="testbot")
 //@Disabled
 public class AutoTestbot extends LinearOpMode {
@@ -39,79 +41,109 @@ public class AutoTestbot extends LinearOpMode {
         //run loop while button pressed
         while (isStarted()) {
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
-            PID_power = gyro.calcAngle(0);
-            move2D(0,0,PID_power);
-            encoderDrive(0.5,0.5,10,4,2);
-            PID_power = gyro.calcAngle(90);
-            move2D(0,0,PID_power);
-            encoderDrive(0.5,0.5,10,4,2);
+            gyro.gyroDrive(0,0,3);
+            sleep(1000);
+            gyro.gyroDrive(0,45,3);
+            sleep(1000);
+            gyro.gyroDrive(0,90,3);
+            sleep(1000);
+            gyro.gyroDrive(0,0,0);
+            encoderDrive(0.5,20,20,10,1);
+
             telemetry.addData("Robot Error = " , gyro.angle_error);
             telemetry.addData("Robot Heading = " , gyro.getAngle());
             telemetry.addData("Robot PID Correction = " , gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
             telemetry.update();
         }
+        move2D(0,0);
     }
     //method for movement
-    public void move2D(double forw, double side, double spin){
+    public void move2D(double forw, double spin){
         double LPow = forw + spin;
         double RPow = forw - spin;
         robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
         robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
     }
-    public void encoderDrive(double Lspeed, double Rspeed, double Inches, double timeoutS, double rampup){
-        double     COUNTS_PER_MOTOR_REV    = 560 ;    //Set for NevRest 20 drive. For 40's change to 1120. For 60's 1680
-        double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is the ratio between the motor axle and the wheel
-        double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-        double     COUNTS_PER_INCH         =  (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-        //initialise some variables for the subroutine
-        int newLeftTarget;
-        int newRightTarget;
-        // Ensure that the opmode is still active
-        // Determine new target position, and pass to motor controller we only do this in case the encoders are not totally zero'd
-        newLeftTarget = robot.leftDrive.getCurrentPosition() + (int)(Inches * COUNTS_PER_INCH);
-        newRightTarget = robot.rightDrive.getCurrentPosition() + (int)(Inches * COUNTS_PER_INCH);
-        // reset the timeout time and start motion.
-        runtime.reset();
-        // keep looping while we are still active, and there is time left, and neither set of motors have reached the target
-        while ((runtime.seconds() < timeoutS) && (Math.abs(robot.leftDrive.getCurrentPosition()) < newLeftTarget  && (Math.abs(robot.rightDrive.getCurrentPosition()) < newRightTarget))){
-            double rem = (Math.abs(robot.leftDrive.getCurrentPosition())+Math.abs(robot.rightDrive.getCurrentPosition()))/2;
-            double NLspeed;
-            double NRspeed;
-            //To Avoid spinning the wheels, this will "Slowly" ramp the motors up over
-            //the amount of time you set for this SubRun
-            double R = runtime.seconds();
-            if (R < rampup){ double ramp = R / rampup; NLspeed = Lspeed * ramp; NRspeed = Rspeed * ramp;}
-            //Keep running until you are about two rotations out
-            else if(rem > (1000) ) { NLspeed = Lspeed; NRspeed = Rspeed;}
-            //start slowing down as you get close to the target
-            else if(rem > (200) && (Lspeed*.2) > .1 && (Rspeed*.2) > .1) {NLspeed = Lspeed * (rem / 1000); NRspeed = Rspeed * (rem / 1000); }
-            //minimum speed
-            else{ NLspeed = Lspeed * .2; NRspeed = Rspeed * .2; }
-            //Pass the seed values to the motors
-            robot.leftDrive.setPower(NLspeed);
-            robot.rightDrive.setPower(NRspeed);
-        }
-        // Stop all motion;
-        //Note: This is outside our while statement, this will only activate once the time, or distance has been met
-        robot.leftDrive.setPower(0);
-        robot.rightDrive.setPower(0);
-        // show the driver how close they got to the last target
-        telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-        telemetry.update();
-        //setting resetC as a way to check the current encoder values easily
-        double resetC = (Math.abs(robot.leftDrive.getCurrentPosition())+Math.abs(robot.rightDrive.getCurrentPosition()));
-        //Get the motor encoder resets in motion
+    public void encoderDrive(double speed, double leftInches, double rightInches, double AccelerationInches, int Direction) {
+        // Declares variables that are used for this method
+        int NewLeftTarget;
+        int NewRightTarget;
+        int RightPosition;
+        int LeftPosition;
+        double LeftPower;
+        double RightPower;
+        // Resets encoders to 0
         robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //keep waiting while the reset is running
-        while (Math.abs(resetC) > 0){
-            resetC =  Math.abs(robot.leftDrive.getCurrentPosition())+Math.abs(robot.rightDrive.getCurrentPosition());
-            idle();
+        // Checks to make sure that encoders are reset.
+        while(robot.leftDrive.getCurrentPosition() > 1 && robot.rightDrive.getCurrentPosition()> 1){
+            sleep(25);
         }
-        // switch the motors back to RUN_USING_ENCODER mode
-        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //  sleep(250);   // optional pause after each move
+        if (opModeIsActive()) {
+            // Determine new target position, and pass to motor controller
+            // Calculates the needed encoder ticks by multiplying a pre-determined amount of robot.COUNTS_PER_INCHes,
+            // and the method input gets the actual distance travel in inches
+            NewLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (leftInches * robot.COUNTS_PER_INCH);
+            NewRightTarget = robot.rightDrive.getCurrentPosition() + (int) (rightInches * robot.COUNTS_PER_INCH);
+            // Gets the current position of the encoders at the beginning of the EncoderDrive method
+            RightPosition = robot.rightDrive.getCurrentPosition();
+            LeftPosition = robot.leftDrive.getCurrentPosition();
+            // Gives the encoders the target.
+            robot.leftDrive.setTargetPosition(NewLeftTarget);
+            robot.rightDrive.setTargetPosition(NewRightTarget);
+
+            robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            while(robot.leftDrive.getCurrentPosition() > 1){
+                sleep(15);
+            }
+            // Turn On RUN_TO_POSITION
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // reset the timeout time and start motion.
+            runtime.reset();
+            // This gets where the motor encoders will be at full position when it will be at full speed.
+            double LeftEncoderPositionAtFullSpeed = ((AccelerationInches*(robot.COUNTS_PER_INCH)) + LeftPosition);
+            double RightEncoderPositionAtFullSpeed = ((AccelerationInches*(robot.COUNTS_PER_INCH)) + RightPosition);
+            boolean Running = true;
+            // This gets the absolute value of the encoder positions at full speed - the current speed, and while it's greater than 0, it will continues increasing the speed.
+            // This allows the robot to accelerate over a set number of inches, which reduces wheel slippage and increases overall reliability
+            while (robot.leftDrive.isBusy() && robot.rightDrive.isBusy() && Running && opModeIsActive()) {
+                // While encoders are not at position
+                if (((Math.abs(speed)) - (Math.abs(robot.leftDrive.getPower()))) > .05){
+                    // This allows the robot to accelerate over a set distance, rather than going full speed.  This reduces wheel slippage and increases reliability.
+                    LeftPower = (Range.clip(Math.abs((robot.leftDrive.getCurrentPosition()) / (LeftEncoderPositionAtFullSpeed)), .15, speed));
+                    RightPower =(Range.clip(Math.abs((robot.rightDrive.getCurrentPosition()) / (RightEncoderPositionAtFullSpeed)), .15, speed));
+
+                    robot.leftDrive.setPower(LeftPower*Direction);
+                    robot.rightDrive.setPower(RightPower*Direction);
+
+                    telemetry.addData("Accelerating", RightEncoderPositionAtFullSpeed);
+                    telemetry.addData("Path1", "Running to %7d :%7d", NewLeftTarget, NewRightTarget);
+                    telemetry.addData("Path2", "Running at %7d :%7d", robot.leftDrive.getCurrentPosition(), robot.rightDrive.getCurrentPosition());
+                    telemetry.update();
+                }else if(Math.abs(NewLeftTarget) - Math.abs(robot.leftDrive.getCurrentPosition()) < -1) {
+                    Running = false;
+                }else{
+                    // Multiplies the speed desired by the direction, which has a value of either 1, or -1, and allows for backwards driving with the ramp up function
+                    robot.leftDrive.setPower((speed*Direction));
+                    robot.rightDrive.setPower((speed*Direction));
+
+                    telemetry.addData("Path1", "Running to %7d :%7d", NewLeftTarget, NewRightTarget);
+                    telemetry.addData("Path2", "Running at %7d :%7d", robot.leftDrive.getCurrentPosition(), robot.rightDrive.getCurrentPosition());
+                    telemetry.update();
+                }
+                // Display information for the driver.
+            }
+            // Stops all motion
+            // Set to run without encoder, so it's not necessary to declare this every time after the method is used
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            // Set power to 0
+            robot.leftDrive.setPower(0);
+            robot.rightDrive.setPower(0);
+
+        }
     }
 }
 
