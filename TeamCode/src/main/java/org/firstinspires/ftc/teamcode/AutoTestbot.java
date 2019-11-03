@@ -76,9 +76,7 @@ public class AutoTestbot extends LinearOpMode {
         robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Checks to make sure that encoders are reset.
-        while(robot.leftDrive.getCurrentPosition() > 1 && robot.rightDrive.getCurrentPosition()> 1){
-            sleep(25);
-        }
+        while(robot.leftDrive.getCurrentPosition() > 1 && robot.rightDrive.getCurrentPosition()> 1){ sleep(25); }
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
             // Calculates the needed encoder ticks by multiplying a pre-determined amount of robot.COUNTS_PER_INCHes,
