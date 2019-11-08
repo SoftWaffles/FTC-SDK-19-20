@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 public class HardwareTestbot
 {
@@ -16,16 +17,18 @@ public class HardwareTestbot
     private ElapsedTime period  = new ElapsedTime();
     //access instruments of Hub
     BNO055IMU imu;
-    public DcMotor  leftDrive   = null;
-    public DcMotor  rightDrive  = null;
-    public DcMotor  armDrive    = null;
+    public DcMotor FLeft = null;
+    public DcMotor FRight = null;
+    public DcMotor RLeft = null;
+    public DcMotor RRight = null;
+
+    //motor powers
+    public final double             MAX_POWER               = 0.95;
     //motor monitoring
-    double                          PREV_MOTOR_POS          = 0;
-    double                          TOTAL_MOTOR_POS         = 0;
     private static final double     COUNTS_PER_MOTOR_REV    = 1220 ;    // eg: TETRIX Motor Encoder
     private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double             COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES * 3.1415);
+    public static final double      COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES * 3.1415);
 
     public HardwareTestbot(){
     }
@@ -44,26 +47,63 @@ public class HardwareTestbot
         imu = myOpMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        leftDrive = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
-        armDrive = myOpMode.hardwareMap.get(DcMotor.class, "arm_drive");
+        FLeft = myOpMode.hardwareMap.get(DcMotor.class, "FLeft");
+        FRight = myOpMode.hardwareMap.get(DcMotor.class, "FRight");
+        RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
+        RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
-        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoderState("run");
+        encoderState("reset");
 
-        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //Brakes the Motors
+        FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-
-        // Set all motors to zero power
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-        armDrive.setPower(0);
+        FLeft.setPower(0);
+        FRight.setPower(0);
+        RLeft.setPower(0);
+        RRight.setPower(0);
+    }
+    public void move2D(double forw, double side, double spin) {
+        double FLPow = -forw - side + spin;
+        double FRPow = forw - side + spin;
+        double RLPow = forw + side + spin;
+        double RRPow = -forw + side + spin;
+        // normalize all motor speeds so no values exceeds 100%.
+        FLPow = Range.clip(FLPow, -MAX_POWER, MAX_POWER);
+        FRPow = Range.clip(FRPow, -MAX_POWER, MAX_POWER);
+        RLPow = Range.clip(RLPow, -MAX_POWER, MAX_POWER);
+        RRPow = Range.clip(RRPow, -MAX_POWER, MAX_POWER);
+        // Set drive motor power levels.
+        FLeft.setPower(FLPow);
+        FRight.setPower(FRPow);
+        RLeft.setPower(RLPow);
+        RRight.setPower(RRPow);
+    }
+    public void encoderState(String a){
+        if(a.equals("reset")){
+            FLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            RLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            RRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }else if( a.equals("run")){
+            FLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            RLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            RRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }else if(a.equals("position")){
+            FLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            RLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            RRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }else if(a.equals("off")){
+            FLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            FRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            RLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            RRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
     }
  }
 

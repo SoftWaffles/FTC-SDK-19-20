@@ -61,12 +61,6 @@ public class AutoTestbotVuforia extends LinearOpMode {
         }
         if (tfod != null) { tfod.shutdown(); }
     }
-    private void move2D(double forw, double side, double spin){
-        double LPow = forw + spin;
-        double RPow = forw - spin;
-        robot.leftDrive.setPower(Range.clip(LPow, -0.90,0.90));
-        robot.rightDrive.setPower(Range.clip(RPow, -0.90,0.90));
-    }
     //just vuforia engine starting
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
