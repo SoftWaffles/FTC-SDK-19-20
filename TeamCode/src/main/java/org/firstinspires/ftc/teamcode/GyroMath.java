@@ -48,7 +48,7 @@ public class GyroMath {
     }
     public void gyroDrive(double forw, double side, double target, int time){
         while(Math.abs(getError(target)) > 1.5 && Math.abs(prev_angle_error) > 1.5){
-            move2D(0,0,calcPID(target));
+            myRobot.move2D(0,0,calcPID(target));
         }
         runtime.reset();
         while(runtime.seconds() < time){
@@ -56,9 +56,9 @@ public class GyroMath {
             if(getError(target)> 1.5){
                 spin = calcPID(target);
             }
-            move2D(forw, side, spin);
+            myRobot.move2D(forw, side, spin);
         }
-        move2D(0,0,0);
+        myRobot.move2D(0,0,0);
     }
     //PID Math given target
     public double calcPID(double target){
@@ -114,21 +114,5 @@ public class GyroMath {
             hemiTarget = ((target % 180)-180);
         }
         return hemiTarget;
-    }
-    private void move2D(double forw, double side, double spin) {
-        double FLPow = -forw - side + spin;
-        double FRPow = forw - side + spin;
-        double RLPow = forw + side + spin;
-        double RRPow = -forw + side + spin;
-        // normalize all motor speeds so no values exceeds 100%.
-        FLPow = Range.clip(FLPow, -myRobot.MAX_POWER, myRobot.MAX_POWER);
-        FRPow = Range.clip(FRPow, -myRobot.MAX_POWER, myRobot.MAX_POWER);
-        RLPow = Range.clip(RLPow, -myRobot.MAX_POWER, myRobot.MAX_POWER);
-        RRPow = Range.clip(RRPow, -myRobot.MAX_POWER, myRobot.MAX_POWER);
-        // Set drive motor power levels.
-        myRobot.FLeft.setPower(FLPow);
-        myRobot.FRight.setPower(FRPow);
-        myRobot.RLeft.setPower(RLPow);
-        myRobot.RRight.setPower(RRPow);
     }
 }

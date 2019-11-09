@@ -15,7 +15,7 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name="TEST: Vuforia", group="testbot")
+@Autonomous(name="TEST-VUFORIA", group="testbot")
 //@Disabled
 public class AutoTestbotVuforia extends LinearOpMode {
 
@@ -23,8 +23,6 @@ public class AutoTestbotVuforia extends LinearOpMode {
     GyroMath gyro = new GyroMath();
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
 
-    private double PID_power;
-    private int prevTarget;
     //vuforia power
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";

@@ -38,21 +38,26 @@ public class AutoTestbot extends LinearOpMode {
         waitForStart();
         //run loop while button pressed
         while (isStarted()) {
+            teleUpdate();
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
             gyro.gyroDrive(0,0,0,3);
+            teleUpdate();
             sleep(1000);
             gyro.gyroDrive(0,0,45,3);
+            teleUpdate();
             sleep(1000);
             gyro.gyroDrive(0,0,90,3);
+            teleUpdate();
             sleep(1000);
             gyro.gyroDrive(0,0,0,0);
-
-            telemetry.addData("Robot Error = " , gyro.angle_error);
-            telemetry.addData("Robot Heading = " , gyro.getAngle());
-            telemetry.addData("Robot PID Correction = " , gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
-            telemetry.update();
         }
         robot.move2D(0,0,0);
+    }
+    public void teleUpdate(){
+        telemetry.addData("Robot Error = " , gyro.angle_error);
+        telemetry.addData("Robot Heading = " , gyro.getAngle());
+        telemetry.addData("Robot PID Correction = " , gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
+        telemetry.update();
     }
 }
 

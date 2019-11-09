@@ -52,8 +52,9 @@ public class HardwareTestbot
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
         RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
-        encoderState("run");
-        encoderState("reset");
+        encoderState("off");
+        //encoderState("run");
+        //encoderState("reset");
 
         //Brakes the Motors
         FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -67,10 +68,10 @@ public class HardwareTestbot
         RRight.setPower(0);
     }
     public void move2D(double forw, double side, double spin) {
-        double FLPow = -forw - side + spin;
-        double FRPow = forw - side + spin;
+        double FLPow = forw + side + spin;
+        double FRPow = forw + side + spin;
         double RLPow = forw + side + spin;
-        double RRPow = -forw + side + spin;
+        double RRPow = forw + side + spin;
         // normalize all motor speeds so no values exceeds 100%.
         FLPow = Range.clip(FLPow, -MAX_POWER, MAX_POWER);
         FRPow = Range.clip(FRPow, -MAX_POWER, MAX_POWER);
