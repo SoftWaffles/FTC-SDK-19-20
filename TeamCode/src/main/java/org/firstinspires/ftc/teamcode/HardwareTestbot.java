@@ -9,6 +9,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
 public class HardwareTestbot
 {
     //define opmode members
@@ -17,6 +22,11 @@ public class HardwareTestbot
     private ElapsedTime period  = new ElapsedTime();
     //access instruments of Hub
     BNO055IMU imu;
+
+    // State used for updating telemetry
+    Orientation angle;
+    Acceleration gravity;
+    // State used for updating telemetry
     public DcMotor FLeft = null;
     public DcMotor FRight = null;
     public DcMotor RLeft = null;
@@ -44,6 +54,10 @@ public class HardwareTestbot
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
         imu = myOpMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
@@ -52,7 +66,7 @@ public class HardwareTestbot
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
         RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
-        encoderState("off");
+        //encoderState("off");
         //encoderState("run");
         //encoderState("reset");
 
@@ -68,10 +82,10 @@ public class HardwareTestbot
         RRight.setPower(0);
     }
     public void move2D(double forw, double side, double spin) {
-        double FLPow = forw + side + spin;
+        double FLPow = -forw + side + spin;
         double FRPow = forw + side + spin;
-        double RLPow = forw + side + spin;
-        double RRPow = forw + side + spin;
+        double RLPow = -forw - side + spin;
+        double RRPow = forw - side + spin;
         // normalize all motor speeds so no values exceeds 100%.
         FLPow = Range.clip(FLPow, -MAX_POWER, MAX_POWER);
         FRPow = Range.clip(FRPow, -MAX_POWER, MAX_POWER);

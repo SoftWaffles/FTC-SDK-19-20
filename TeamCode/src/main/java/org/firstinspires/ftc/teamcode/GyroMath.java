@@ -19,9 +19,6 @@ public class GyroMath {
     //define class members
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareTestbot myRobot;
-    //declaration of objects
-    private Orientation angle;
-    public Acceleration gravity;
     //angle variables
     private double globalAngle;
     double target_Angle = 0;
@@ -33,7 +30,7 @@ public class GyroMath {
     double target_Distance = 1;
     //timing
     private double elaspsedTime, time, timePrev;
-    private double period;
+    private double period = 1;
     //variables for the PID systems
     double kP = 0.005;
     double kI = 0.001;
@@ -43,20 +40,14 @@ public class GyroMath {
 
     public GyroMath() { }
 
-    public void initDrive(HardwareTestbot myRobot) { myRobot = myRobot;
-    time = runtime.seconds();
+    public void initDrive(HardwareTestbot robo) {
+        myRobot = robo;
+        time = runtime.seconds();
     }
     public void gyroDrive(double forw, double side, double target, int time){
-        while(Math.abs(getError(target)) > 1.5 && Math.abs(prev_angle_error) > 1.5){
-            myRobot.move2D(0,0,calcPID(target));
-        }
         runtime.reset();
-        while(runtime.seconds() < time){
-            double spin = 0;
-            if(getError(target)> 1.5){
-                spin = calcPID(target);
-            }
-            myRobot.move2D(forw, side, spin);
+        while(runtime.seconds()<time){
+            myRobot.move2D(0,0,calcPID(target));
         }
         myRobot.move2D(0,0,0);
     }
@@ -71,20 +62,19 @@ public class GyroMath {
 
             double angle_Derv = angle_error - prev_angle_error;
             PID_d = kD*(angle_Derv/period);
-
+            /*
             if(-50 > angle_error && angle_error < 50){
                 PID_i = PID_i + (kI * angle_error);
             }else{
                 PID_i = 0;
             }
-
+            */
             if(Math.abs(angle_error) > 5){
                 PID_total = PID_p; //+ PID_i + PID_d;
             }else{
                 PID_total = 0;
             }
             prev_angle_error = angle_error;
-            //send back value
         }
         return PID_total;
     }
@@ -93,18 +83,18 @@ public class GyroMath {
     }
     //make current heading the zero
     void resetAngle() {
-        angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        myRobot.angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         globalAngle = 0;
     }
     //reading angle objects z axis
-    double getAngle() {
-        Orientation angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angle.firstAngle;
+    public double getAngle() {
+        myRobot.angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return myRobot.angle.firstAngle;
     }
     //converting heading to global angle
     double getGlobalAngle() {
-        Orientation angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        globalAngle = (angle.firstAngle+360)%360;
+        myRobot.angle = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        globalAngle = (myRobot.angle.firstAngle+360)%360;
         return globalAngle;
     }
     //convert target to hemisphere angle

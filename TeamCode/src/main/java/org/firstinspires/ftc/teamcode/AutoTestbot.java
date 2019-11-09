@@ -19,7 +19,7 @@ public class AutoTestbot extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
     GyroMath gyro = new GyroMath();
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
-
+    double PIDpow = 0;
 
     @Override
     public void runOpMode() {
@@ -28,8 +28,8 @@ public class AutoTestbot extends LinearOpMode {
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
-        while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
-        telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
+        //while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
+        //telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
         telemetry.update();
         //confirm
         telemetry.addData(">", "Robot Ready.");
@@ -38,18 +38,10 @@ public class AutoTestbot extends LinearOpMode {
         waitForStart();
         //run loop while button pressed
         while (isStarted()) {
-            teleUpdate();
             //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
-            gyro.gyroDrive(0,0,0,3);
+            PIDpow = gyro.calcPID(90);
+            robot.move2D(0,0,PIDpow);
             teleUpdate();
-            sleep(1000);
-            gyro.gyroDrive(0,0,45,3);
-            teleUpdate();
-            sleep(1000);
-            gyro.gyroDrive(0,0,90,3);
-            teleUpdate();
-            sleep(1000);
-            gyro.gyroDrive(0,0,0,0);
         }
         robot.move2D(0,0,0);
     }
