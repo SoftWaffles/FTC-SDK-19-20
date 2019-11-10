@@ -78,6 +78,7 @@ public class GyroMath {
         }
         return PID_total;
     }
+
     double getError(double target){
         return target - getGlobalAngle();
     }

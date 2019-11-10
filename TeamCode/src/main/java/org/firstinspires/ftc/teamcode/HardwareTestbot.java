@@ -22,15 +22,15 @@ public class HardwareTestbot
     private ElapsedTime period  = new ElapsedTime();
     //access instruments of Hub
     BNO055IMU imu;
-
-    // State used for updating telemetry
     Orientation angle;
     Acceleration gravity;
-    // State used for updating telemetry
+    // motor declarations
     public DcMotor FLeft = null;
     public DcMotor FRight = null;
     public DcMotor RLeft = null;
     public DcMotor RRight = null;
+    // motor for arm
+    //public DcMotor Arm = null;
 
     //motor powers
     public final double             MAX_POWER               = 0.95;
@@ -66,6 +66,8 @@ public class HardwareTestbot
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
         RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
+        //Arm = myOpmode.hardwareMap.get(DcMotor.class,"lift");
+
         //encoderState("off");
         //encoderState("run");
         //encoderState("reset");
@@ -76,10 +78,13 @@ public class HardwareTestbot
         RLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         FLeft.setPower(0);
         FRight.setPower(0);
         RLeft.setPower(0);
         RRight.setPower(0);
+        //Arm.setZeroPowerBehavior;
     }
     public void move2D(double forw, double side, double spin) {
         double FLPow = -forw + side + spin;

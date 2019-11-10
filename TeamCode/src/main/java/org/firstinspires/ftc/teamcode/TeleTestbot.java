@@ -33,15 +33,15 @@ public class TeleTestbot extends LinearOpMode {
         robot.initDrive(this);
         gyro.initDrive(robot);
         // Send telemetry message to alert driver that we are calibrating;
-        //telemetry.addData(">", "Calibrating Gyro");    //
-        //telemetry.update();
-        //while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(5); idle(); }
-        //telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
-        //telemetry.update();
+        telemetry.addData(">", "Calibrating Gyro");    //
+        telemetry.update();
+        while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(5); idle(); }
+        telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
+        telemetry.update();
         //confirm
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
-        //while (!isStarted()) { telemetry.addData(">", "Robot Heading = ", gyro.getAngle()); telemetry.update();}
+        while (!isStarted()) { telemetry.addData(">", "Robot Heading = ", gyro.getAngle()); telemetry.update();}
         //press that start button
         composeTelemetry();
 
@@ -50,9 +50,7 @@ public class TeleTestbot extends LinearOpMode {
         //run loop while button pressed
         while (isStarted()){
             robot.move2D(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-            telemetry.addData("Angle: ", gyro.getGlobalAngle());
             telemetry.update();
-            //telemetry.update();
         }
         robot.move2D(0,0,0);
     }
