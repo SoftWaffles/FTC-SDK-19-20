@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -30,10 +31,12 @@ public class HardwareTestbot
     public DcMotor RLeft = null;
     public DcMotor RRight = null;
     // motor for arm
-    //public DcMotor Arm = null;
+    public Servo   grab    = null;
+    public Servo   spin    = null;
+    public DcMotor Arm     = null;
 
     //motor powers
-    public final double             MAX_POWER               = 0.95;
+    public final double             MAX_POWER               = 0.5;
     //motor monitoring
     private static final double     COUNTS_PER_MOTOR_REV    = 1220 ;    // eg: TETRIX Motor Encoder
     private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
@@ -66,11 +69,16 @@ public class HardwareTestbot
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
         RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
-        //Arm = myOpmode.hardwareMap.get(DcMotor.class,"lift");
+        Arm = myOpMode.hardwareMap.get(DcMotor.class,"arm");
+        grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
+        spin = myOpMode.hardwareMap.get(Servo.class, "spin");
+
+        grab.setPosition(0);
+        spin.setPosition(0);
 
         //encoderState("off");
+        encoderState("reset");
         //encoderState("run");
-        //encoderState("reset");
 
         //Brakes the Motors
         FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -78,8 +86,14 @@ public class HardwareTestbot
         RLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        FRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        RLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        RRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        Arm.setPower(0);
         FLeft.setPower(0);
         FRight.setPower(0);
         RLeft.setPower(0);
@@ -97,7 +111,7 @@ public class HardwareTestbot
         RLPow = Range.clip(RLPow, -MAX_POWER, MAX_POWER);
         RRPow = Range.clip(RRPow, -MAX_POWER, MAX_POWER);
         // Set drive motor power levels.
-        FLeft.setPower(FLPow);
+        FLeft.setPower(FLPow+0.0);
         FRight.setPower(FRPow);
         RLeft.setPower(RLPow);
         RRight.setPower(RRPow);
