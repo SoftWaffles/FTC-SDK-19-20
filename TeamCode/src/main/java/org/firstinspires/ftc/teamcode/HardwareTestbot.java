@@ -73,13 +73,12 @@ public class HardwareTestbot
         grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
         spin = myOpMode.hardwareMap.get(Servo.class, "spin");
 
-        grab.setPosition(0);
-        spin.setPosition(0);
+        grab.setPosition(0.5);
+        spin.setPosition(0.5);
 
         //encoderState("off");
+        encoderState("run");
         encoderState("reset");
-        //encoderState("run");
-
         //Brakes the Motors
         FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
