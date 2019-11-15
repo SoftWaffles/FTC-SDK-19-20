@@ -28,28 +28,42 @@ public class AutoTestbot extends LinearOpMode {
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
-        //while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
-        //telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
+        while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
+        telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
         telemetry.update();
         //confirm
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
         //press that start button
         waitForStart();
+        runtime.reset();
         //run loop while button pressed
-        while (isStarted()) {
-            //CONVENTIONS USED COUNTERCLOCKWISE IS NEGATIVE TURN ----- CLOCKWISE IS POSITIVE TURN
-            PIDpow = gyro.calcPID(90);
-            robot.move2D(0,0,PIDpow);
-            teleUpdate();
+        while (opModeIsActive() && runtime.milliseconds() < 29000) {
+            //phase 1 forward to grab
+            timeMove(0.2,0.0,2);
+            sleep(1000);
+            //phase 2 back to pull
+            timeMove(-0.2,0,3);
+            sleep(1000);
+            //phase 3 side to park
+            timeMove(-0.1,0.2,4);
+            sleep(1000);
         }
-        robot.move2D(0,0,0);
     }
-    public void teleUpdate(){
+    private void teleUpdate(){
         telemetry.addData("Robot Error = " , gyro.angle_error);
         telemetry.addData("Robot Heading = " , gyro.getAngle());
         telemetry.addData("Robot PID Correction = " , gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");
         telemetry.update();
+    }
+    private void timeMove(double forw, double side, int mTime){
+        runtime.reset();
+        while(runtime.milliseconds()<mTime){
+            double funcF = -Math.pow(mTime/2,2)*Math.pow((runtime.milliseconds()-(mTime/2)),2)+1;
+            double funcS = -Math.pow(mTime/2,2)*Math.pow((runtime.milliseconds()-(mTime/2)),2)+1;
+            robot.move2D(forw*funcF,side*funcS,0);
+        }
+        robot.move2D(0,0,0);
     }
 }
 

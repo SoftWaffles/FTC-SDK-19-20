@@ -16,7 +16,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 @Autonomous(name="TEST-VUFORIA", group="testbot")
-//@Disabled
+@Disabled
 public class AutoTestbotVuforia extends LinearOpMode {
 
     /* Declare OpMode members. */

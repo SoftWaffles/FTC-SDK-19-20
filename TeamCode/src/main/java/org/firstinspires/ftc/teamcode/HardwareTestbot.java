@@ -36,7 +36,7 @@ public class HardwareTestbot
     public DcMotor Arm     = null;
 
     //motor powers
-    public final double             MAX_POWER               = 0.5;
+    public double             MAX_POWER               = 0.5;
     //motor monitoring
     private static final double     COUNTS_PER_MOTOR_REV    = 1220 ;    // eg: TETRIX Motor Encoder
     private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
@@ -77,15 +77,15 @@ public class HardwareTestbot
         spin.setPosition(0.5);
 
         //encoderState("off");
-        encoderState("run");
-        encoderState("reset");
+        //encoderState("run");
+        //encoderState("reset");
         //Brakes the Motors
         FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        FLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        FLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         FRight.setDirection(DcMotorSimple.Direction.REVERSE);
         RLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         RRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -110,7 +110,7 @@ public class HardwareTestbot
         RLPow = Range.clip(RLPow, -MAX_POWER, MAX_POWER);
         RRPow = Range.clip(RRPow, -MAX_POWER, MAX_POWER);
         // Set drive motor power levels.
-        FLeft.setPower(FLPow+0.0);
+        FLeft.setPower(FLPow);
         FRight.setPower(FRPow);
         RLeft.setPower(RLPow);
         RRight.setPower(RRPow);

@@ -27,10 +27,12 @@ public class Calibrate extends LinearOpMode {
         frontright = hardwareMap.dcMotor.get("frontright");
         backleft = hardwareMap.dcMotor.get("backleft");
         backright = hardwareMap.dcMotor.get("backright");
-        frontright.setDirection(DcMotorSimple.Direction.REVERSE);//If your robot goes backward, switch this from right to left
-        backright.setDirection(DcMotorSimple.Direction.REVERSE);//If your robot goes backward, switch this from right to left
+        frontleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontright.setDirection(DcMotorSimple.Direction.REVERSE);
+        backleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backright.setDirection(DcMotorSimple.Direction.REVERSE);
         //
-        waitForStartify();
+        waitForStart();
         //
         moveToPosition(20, .2);//Don't change this line, unless you want to calibrate with different speeds
         //
@@ -109,8 +111,5 @@ public class Calibrate extends LinearOpMode {
             backright.setPower(0);
         }
         return;
-    }
-    private void waitForStartify() {
-        waitForStart();
     }
 }

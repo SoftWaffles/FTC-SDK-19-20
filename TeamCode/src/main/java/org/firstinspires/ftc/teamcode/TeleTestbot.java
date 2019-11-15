@@ -48,28 +48,31 @@ public class TeleTestbot extends LinearOpMode {
         waitForStart();
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         //run loop while button pressed
-        while (isStarted()){
+        while (opModeIsActive()){
             robot.move2D(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+            buttons();
             telemetry.update();
-            if(gamepad1.left_trigger != 0){
-                robot.Arm.setPower(-0.5);
-            }else if(gamepad1.right_trigger != 0){
-                robot.Arm.setPower(0.2);
-            }else{
-                robot.Arm.setPower(0);
-            }
-            if(gamepad1.dpad_up){
-                robot.spin.setPosition(0.6);
-            }else if(gamepad1.dpad_down){
-                robot.spin.setPosition(0);
-            }
-            if(gamepad1.dpad_left){
-                robot.grab.setPosition(1);
-            }else if(gamepad1.dpad_right){
-                robot.grab.setPosition(0.42);
-            }
         }
-        robot.move2D(0,0,0);
+    }
+    void buttons(){
+        robot.MAX_POWER = (1/gamepad1.left_trigger)/100;
+        if(gamepad1.right_bumper){
+            robot.Arm.setPower(-0.5);
+        }else if(gamepad1.right_trigger != 0){
+            robot.Arm.setPower(0.1);
+        }else{
+            robot.Arm.setPower(0);
+        }
+        if(gamepad1.dpad_up){
+            robot.spin.setPosition(0.6);
+        }else if(gamepad1.dpad_down){
+            robot.spin.setPosition(0);
+        }
+        if(gamepad1.dpad_left){
+            robot.grab.setPosition(1);
+        }else if(gamepad1.dpad_right){
+            robot.grab.setPosition(0.42);
+        }
     }
     void composeTelemetry() {
 
