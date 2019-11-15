@@ -63,14 +63,14 @@ public class TeleTestbot extends LinearOpMode {
         }else{
             robot.Arm.setPower(0);
         }
-        if(gamepad1.dpad_up){
+        if(gamepad1.dpad_left){
             robot.spin.setPosition(0.6);
-        }else if(gamepad1.dpad_down){
+        }else if(gamepad1.dpad_right){
             robot.spin.setPosition(0);
         }
-        if(gamepad1.dpad_left){
+        if(gamepad1.dpad_up){
             robot.grab.setPosition(1);
-        }else if(gamepad1.dpad_right){
+        }else if(gamepad1.dpad_down){
             robot.grab.setPosition(0.42);
         }
     }

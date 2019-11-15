@@ -23,19 +23,19 @@ public class Calibrate extends LinearOpMode {
     //
     public void runOpMode() {
         //
-        frontleft = hardwareMap.dcMotor.get("frontleft");
-        frontright = hardwareMap.dcMotor.get("frontright");
-        backleft = hardwareMap.dcMotor.get("backleft");
-        backright = hardwareMap.dcMotor.get("backright");
+        frontleft = hardwareMap.dcMotor.get("FLeft");
+        frontright = hardwareMap.dcMotor.get("FRight");
+        backleft = hardwareMap.dcMotor.get("RLeft");
+        backright = hardwareMap.dcMotor.get("RRight");
         frontleft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontright.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontright.setDirection(DcMotorSimple.Direction.FORWARD);
         backleft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backright.setDirection(DcMotorSimple.Direction.REVERSE);
+        backright.setDirection(DcMotorSimple.Direction.FORWARD);
         //
         waitForStart();
         //
-        moveToPosition(20, .2);//Don't change this line, unless you want to calibrate with different speeds
-        //
+        moveToPosition(5, .2);//Don't change this line, unless you want to calibrate with different speeds
+
     }
     //
     /*

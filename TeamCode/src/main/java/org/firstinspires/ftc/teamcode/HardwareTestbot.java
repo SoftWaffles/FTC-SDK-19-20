@@ -33,6 +33,7 @@ public class HardwareTestbot
     // motor for arm
     public Servo   grab    = null;
     public Servo   spin    = null;
+    public Servo   bar     = null;
     public DcMotor Arm     = null;
 
     //motor powers
@@ -72,12 +73,14 @@ public class HardwareTestbot
         Arm = myOpMode.hardwareMap.get(DcMotor.class,"arm");
         grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
         spin = myOpMode.hardwareMap.get(Servo.class, "spin");
+        bar = myOpMode.hardwareMap.get(Servo.class, "bar");
 
         grab.setPosition(0.5);
-        spin.setPosition(0.5);
+        spin.setPosition(0.64);
+        bar.setPosition(0.5);
 
         //encoderState("off");
-        //encoderState("run");
+        encoderState("run");
         //encoderState("reset");
         //Brakes the Motors
         FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
