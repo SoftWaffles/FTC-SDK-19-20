@@ -77,10 +77,10 @@ public class HardwareTestbot
 
         grab.setPosition(0.5);
         spin.setPosition(0.64);
-        bar.setPosition(0.5);
+        bar.setPosition(1);
 
         //encoderState("off");
-        encoderState("run");
+        //encoderState("run");
         //encoderState("reset");
         //Brakes the Motors
         FLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -108,10 +108,10 @@ public class HardwareTestbot
         double RLPow = -forw - side + spin;
         double RRPow = forw - side + spin;
         // normalize all motor speeds so no values exceeds 100%.
-        FLPow = Range.clip(FLPow, -MAX_POWER, MAX_POWER);
-        FRPow = Range.clip(FRPow, -MAX_POWER, MAX_POWER);
-        RLPow = Range.clip(RLPow, -MAX_POWER, MAX_POWER);
-        RRPow = Range.clip(RRPow, -MAX_POWER, MAX_POWER);
+        FLPow = Range.clip(FLPow, -MAX_POWER/2, MAX_POWER/2);
+        FRPow = Range.clip(FRPow, -MAX_POWER/2, MAX_POWER/2);
+        RLPow = Range.clip(RLPow, -MAX_POWER/2, MAX_POWER/2);
+        RRPow = Range.clip(RRPow, -MAX_POWER/2, MAX_POWER/2);
         // Set drive motor power levels.
         FLeft.setPower(FLPow);
         FRight.setPower(FRPow);

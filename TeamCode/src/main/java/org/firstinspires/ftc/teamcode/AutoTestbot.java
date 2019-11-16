@@ -26,11 +26,11 @@ public class AutoTestbot extends LinearOpMode {
         robot.initDrive(this);
         gyro.initDrive(robot);
         // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-        while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
-        telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
-        telemetry.update();
+        //telemetry.addData(">", "Calibrating Gyro");    //
+        //telemetry.update();
+        //while (!isStopRequested() && !robot.imu.isGyroCalibrated()) { sleep(50); idle(); }
+        //telemetry.addData("imu calib status: ", robot.imu.getCalibrationStatus().toString());
+        //telemetry.update();
         //confirm
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
@@ -40,16 +40,18 @@ public class AutoTestbot extends LinearOpMode {
         //run loop while button pressed
         while (opModeIsActive() && runtime.seconds() < 29) {
             //phase 1 forward to grab
-            timeMove(0.0,0.2,1300);
-            sleep(2000);
-            robot.bar.setPosition(0);
-            sleep(2000);
+            timeMove(0.0,0.2,1400);
+            timeMove(0.2,0.0,600);
+            sleep(1000);
+            robot.bar.setPosition(0.4);
+            sleep(1000);
+            timeMove(0.0,-0.2,2100);
+            sleep(1000);
+            robot.bar.setPosition(1);
+            sleep(1000);
             timeMove(0.0,-0.2,1500);
-            sleep(2000);
-            robot.bar.setPosition(0.5);
-            sleep(2000);
-            timeMove(-0.2,0.0,1500);
             robot.move2D(0,0,0);
+            break;
         }
     }
     private void teleUpdate(){
