@@ -1,19 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.logitech.LogitechGamepadF310;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Autonomous(name="AUTO-DRIVE-STONE", group="testbot")
 //@Disabled
-public class AutoTestbot extends LinearOpMode {
+public class AutoTestbotFoundation extends LinearOpMode {
 
     /* Declare OpMode members. */
     ElapsedTime runtime = new ElapsedTime();
@@ -38,16 +31,12 @@ public class AutoTestbot extends LinearOpMode {
         runtime.reset();
         //run loop while button pressed
         while (opModeIsActive() && runtime.seconds() < 29) {
-            gyro.gyroDrive(0.4,0.0,0,4);
-            gyro.gyroDrive(0.0,0.4, 0,2);
-            while(80 < robot.cSensor.alpha() && robot.cSensor.alpha() < 200){
-                robot.move2D(0.0, -0.3, gyro.calcPID(0));
-            }
-            robot.grab.setPosition(1);
-            gyro.gyroDrive(-0.4,0.0,0,2);
-            gyro.gyroDrive(0,0,90,2);
-            gyro.gyroDrive(0.6,0,90,5);
-            robot.grab.setPosition(0.4);
+            gyro.gyroDrive(-0.4,0.0,0,4);
+            gyro.gyroDrive(0.4,0.0,0,2);
+            robot.bar.setPosition(1);
+            gyro.gyroDrive(0,0,270,4);
+            gyro.gyroDrive(-0.4, 0,0,1);
+            robot.bar.setPosition(0.3);
         }
     }
     private void teleUpdate(){

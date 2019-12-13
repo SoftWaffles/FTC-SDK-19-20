@@ -24,12 +24,8 @@ public class GyroMath {
     double target_Angle = 0;
     private double prev_angle_error = 0;
     double angle_error;
-    //distance variables - LATER
-    double distance = 0;
-    double prev_dist_error, dist_error;
-    double target_Distance = 1;
     //timing
-    private double elaspsedTime, time, timePrev;
+    private double time;
     private double period = 1;
     //variables for the PID systems
     double kP = 0.005;
@@ -47,6 +43,9 @@ public class GyroMath {
     public void gyroDrive(double forw, double side, double target, int time){
         runtime.reset();
         while(runtime.seconds()<time){
+            if(getError(target) < 3){
+                myRobot.move2D(forw,side,0);
+            }
             myRobot.move2D(0,0,calcPID(target));
         }
         myRobot.move2D(0,0,0);

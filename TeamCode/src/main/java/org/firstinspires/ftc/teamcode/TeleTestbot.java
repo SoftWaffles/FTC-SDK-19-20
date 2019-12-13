@@ -27,6 +27,7 @@ public class TeleTestbot extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
     GyroMath gyro = new GyroMath();
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
+    boolean wasB = false;
 
     @Override
     public void runOpMode() {
@@ -50,29 +51,26 @@ public class TeleTestbot extends LinearOpMode {
         //run loop while button pressed
         while (opModeIsActive()){
             robot.move2D(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-            buttons();
+            buttons(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.left_trigger, gamepad1.right_trigger, gamepad1.b);
             telemetry.update();
         }
     }
-    void buttons(){
-        robot.MAX_POWER = (1/gamepad1.left_trigger)/100;
-        if(gamepad1.right_bumper){
+    void buttons(boolean LBump, boolean RBump, double LTrig, double RTrig, boolean b){
+        if(RBump || LBump){
             robot.Arm.setPower(-0.5);
-        }else if(gamepad1.right_trigger != 0){
+        }else if((LTrig + RTrig) != 0){
             robot.Arm.setPower(0.1);
         }else{
-            robot.Arm.setPower(0);
+            robot.Arm.setPower(0.0);
         }
-        if(gamepad1.dpad_left){
-            robot.spin.setPosition(0.6);
-        }else if(gamepad1.dpad_right){
-            robot.spin.setPosition(0);
+        if(b && !wasB){
+            if(robot.grab.getPosition() == 1){
+                robot.grab.setPosition(0.4);
+            }else{
+                robot.grab.setPosition(1);
+            }
         }
-        if(gamepad1.dpad_up){
-            robot.grab.setPosition(1);
-        }else if(gamepad1.dpad_down){
-            robot.grab.setPosition(0.42);
-        }
+        wasB = b;
     }
     void composeTelemetry() {
 

@@ -4,45 +4,36 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class HardwareTestbot
 {
     //define opmode members
 
     private LinearOpMode myOpMode;
-    private ElapsedTime period  = new ElapsedTime();
     //access instruments of Hub
     BNO055IMU imu;
     Orientation angle;
     Acceleration gravity;
+    //sensors
+    ColorSensor cSensor;
     // motor declarations
-    public DcMotor FLeft = null;
-    public DcMotor FRight = null;
-    public DcMotor RLeft = null;
-    public DcMotor RRight = null;
+    public DcMotor FLeft   = null;
+    public DcMotor FRight  = null;
+    public DcMotor RLeft   = null;
+    public DcMotor RRight  = null;
     // motor for arm
     public Servo   grab    = null;
-    public Servo   spin    = null;
     public Servo   bar     = null;
     public DcMotor Arm     = null;
 
     //motor powers
-    public double             MAX_POWER               = 0.5;
-    //motor monitoring
-    private static final double     COUNTS_PER_MOTOR_REV    = 1220 ;    // eg: TETRIX Motor Encoder
-    private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    public static final double      COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES * 3.1415);
+    public double MAX_POWER = 0.5;
 
     public HardwareTestbot(){
     }
@@ -65,6 +56,8 @@ public class HardwareTestbot
         imu = myOpMode.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        cSensor = myOpMode.hardwareMap.colorSensor.get("color");
+
         FLeft = myOpMode.hardwareMap.get(DcMotor.class, "FLeft");
         FRight = myOpMode.hardwareMap.get(DcMotor.class, "FRight");
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
@@ -72,11 +65,9 @@ public class HardwareTestbot
 
         Arm = myOpMode.hardwareMap.get(DcMotor.class,"arm");
         grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
-        spin = myOpMode.hardwareMap.get(Servo.class, "spin");
         bar = myOpMode.hardwareMap.get(Servo.class, "bar");
 
         grab.setPosition(0.5);
-        spin.setPosition(0.64);
         bar.setPosition(1);
 
         //encoderState("off");
@@ -88,10 +79,10 @@ public class HardwareTestbot
         RLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        FLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        FRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        RLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        RRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        FLeft.setDirection(DcMotor.Direction.REVERSE);
+        FRight.setDirection(DcMotor.Direction.REVERSE);
+        RLeft.setDirection(DcMotor.Direction.REVERSE);
+        RRight.setDirection(DcMotor.Direction.REVERSE);
 
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -108,10 +99,10 @@ public class HardwareTestbot
         double RLPow = -forw - side + spin;
         double RRPow = forw - side + spin;
         // normalize all motor speeds so no values exceeds 100%.
-        FLPow = Range.clip(FLPow, -MAX_POWER/2, MAX_POWER/2);
-        FRPow = Range.clip(FRPow, -MAX_POWER/2, MAX_POWER/2);
-        RLPow = Range.clip(RLPow, -MAX_POWER/2, MAX_POWER/2);
-        RRPow = Range.clip(RRPow, -MAX_POWER/2, MAX_POWER/2);
+        FLPow = Range.clip(FLPow, -MAX_POWER, MAX_POWER);
+        FRPow = Range.clip(FRPow, -MAX_POWER, MAX_POWER);
+        RLPow = Range.clip(RLPow, -MAX_POWER, MAX_POWER);
+        RRPow = Range.clip(RRPow, -MAX_POWER, MAX_POWER);
         // Set drive motor power levels.
         FLeft.setPower(FLPow);
         FRight.setPower(FRPow);
