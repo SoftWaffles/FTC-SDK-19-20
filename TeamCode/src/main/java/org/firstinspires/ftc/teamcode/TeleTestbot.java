@@ -28,6 +28,7 @@ public class TeleTestbot extends LinearOpMode {
     GyroMath gyro = new GyroMath();
     HardwareTestbot robot = new HardwareTestbot();   // Use a Pushbot's hardware
     boolean wasB = false;
+    boolean wasY = false;
 
     @Override
     public void runOpMode() {
@@ -44,24 +45,32 @@ public class TeleTestbot extends LinearOpMode {
         telemetry.update();
         while (!isStarted()) { telemetry.addData(">", "Robot Heading = ", gyro.getAngle()); telemetry.update();}
         //press that start button
-        composeTelemetry();
+        //composeTelemetry();
 
         waitForStart();
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         //run loop while button pressed
-        while (opModeIsActive()){
+        while (opModeIsActive() && !isStopRequested()){
             robot.move2D(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-            buttons(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.left_trigger, gamepad1.right_trigger, gamepad1.b);
+            buttons(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.left_trigger, gamepad1.right_trigger, gamepad1.b, gamepad1.y);
+            telemetry.addData("Brightness = ", robot.cSensor.alpha());
             telemetry.update();
         }
     }
-    void buttons(boolean LBump, boolean RBump, double LTrig, double RTrig, boolean b){
+    void buttons(boolean LBump, boolean RBump, double LTrig, double RTrig, boolean b, boolean y){
         if(RBump || LBump){
             robot.Arm.setPower(-0.5);
         }else if((LTrig + RTrig) != 0){
             robot.Arm.setPower(0.1);
         }else{
             robot.Arm.setPower(0.0);
+        }
+        if(y && !wasY){
+            if(robot.bar.getPosition() == 1){
+                robot.grab.setPosition(0);
+            }else {
+                robot.grab.setPosition(1);
+            }
         }
         if(b && !wasB){
             if(robot.grab.getPosition() == 1){
@@ -70,8 +79,10 @@ public class TeleTestbot extends LinearOpMode {
                 robot.grab.setPosition(1);
             }
         }
+        wasY = y;
         wasB = b;
     }
+    /*
     void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data
@@ -129,7 +140,7 @@ public class TeleTestbot extends LinearOpMode {
                     }
                 });
     }
-
+    */
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }

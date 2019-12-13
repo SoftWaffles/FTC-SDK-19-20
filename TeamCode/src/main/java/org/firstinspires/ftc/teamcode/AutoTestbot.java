@@ -37,20 +37,28 @@ public class AutoTestbot extends LinearOpMode {
         waitForStart();
         runtime.reset();
         //run loop while button pressed
-        while (opModeIsActive() && runtime.seconds() < 29) {
-            gyro.gyroDrive(0.4,0.0,0,4);
-            gyro.gyroDrive(0.0,0.4, 0,2);
-            while(80 < robot.cSensor.alpha() && robot.cSensor.alpha() < 200){
-                robot.move2D(0.0, -0.3, gyro.calcPID(0));
+        while (opModeIsActive() && runtime.seconds() < 29 && !isStopRequested()) {
+            gyro.gyroDrive(-0.3,0.0,0,0.7);
+            sleep(1000);
+            gyro.gyroDrive(0.0,0.3, 0,0.6);
+            sleep(1000);
+            while(100 < robot.cSensor.alpha() && robot.cSensor.alpha() < 400 && !isStopRequested()){
+                robot.move2D(0.0, -0.2, 0);
+                teleUpdate();
             }
+            gyro.gyroDrive(0,-0.2,0,1);
+            gyro.gyroDrive(-0.2,0,0,0.3);
+            sleep(1000);
             robot.grab.setPosition(1);
-            gyro.gyroDrive(-0.4,0.0,0,2);
-            gyro.gyroDrive(0,0,90,2);
-            gyro.gyroDrive(0.6,0,90,5);
-            robot.grab.setPosition(0.4);
+            sleep(500);
+            gyro.gyroDrive(0.35,0,0,0.7);
+            sleep(100);
+            gyro.gyroDrive(0,0,90,4);
+            break;
         }
     }
     private void teleUpdate(){
+        telemetry.addData("Brightness = ", robot.cSensor.alpha());
         telemetry.addData("Robot Error = " , gyro.angle_error);
         telemetry.addData("Robot Heading = " , gyro.getAngle());
         telemetry.addData("Robot PID Correction = " , gyro.PID_total + " = P( " + gyro.PID_p + " ) + I( " + gyro.PID_i + " ) + D( " + gyro.PID_d + " )");

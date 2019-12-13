@@ -40,15 +40,14 @@ public class GyroMath {
         myRobot = robo;
         time = runtime.seconds();
     }
-    public void gyroDrive(double forw, double side, double target, int time){
+    public void gyroDrive(double forw, double side, double target, double time){
         runtime.reset();
-        while(runtime.seconds()<time){
-            if(getError(target) < 3){
-                myRobot.move2D(forw,side,0);
-            }
-            myRobot.move2D(0,0,calcPID(target));
+        while(runtime.seconds()<time ) {
+            if(target == 0)
+                myRobot.move2D(forw, side, 0);
+            else
+                myRobot.move2D(0,0,calcPID(target));
         }
-        myRobot.move2D(0,0,0);
     }
     //PID Math given target
     public double calcPID(double target){

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="AUTO-DRIVE-STONE", group="testbot")
+@Autonomous(name="AUTO-DRIVE-FOUND", group="testbot")
 //@Disabled
 public class AutoTestbotFoundation extends LinearOpMode {
 
