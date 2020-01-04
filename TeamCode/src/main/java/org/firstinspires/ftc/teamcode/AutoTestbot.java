@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="AUTO-DRIVE-STONE", group="testbot")
+@Autonomous(name="AUTO-DRIVE-SIMPLE-ONBOT", group="testbot")
 //@Disabled
 public class AutoTestbot extends LinearOpMode {
 
@@ -38,22 +38,7 @@ public class AutoTestbot extends LinearOpMode {
         runtime.reset();
         //run loop while button pressed
         while (opModeIsActive() && runtime.seconds() < 29 && !isStopRequested()) {
-            gyro.gyroDrive(-0.3,0.0,0,0.7);
-            sleep(1000);
-            gyro.gyroDrive(0.0,0.3, 0,0.6);
-            sleep(1000);
-            while(100 < robot.cSensor.alpha() && robot.cSensor.alpha() < 400 && !isStopRequested()){
-                robot.move2D(0.0, -0.2, 0);
-                teleUpdate();
-            }
-            gyro.gyroDrive(0,-0.2,0,1);
-            gyro.gyroDrive(-0.2,0,0,0.3);
-            sleep(1000);
-            robot.grab.setPosition(1);
-            sleep(500);
-            gyro.gyroDrive(0.35,0,0,0.7);
-            sleep(100);
-            gyro.gyroDrive(0,0,90,4);
+            gyro.gyroDrive(0.0,0.0,90,10);
             break;
         }
     }

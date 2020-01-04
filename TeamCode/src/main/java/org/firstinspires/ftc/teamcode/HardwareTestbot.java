@@ -33,7 +33,7 @@ public class HardwareTestbot
     public DcMotor Arm     = null;
 
     //motor powers
-    public double MAX_POWER = 0.5;
+    public double MAX_POWER = 0.8;
 
     public HardwareTestbot(){
     }
@@ -67,8 +67,8 @@ public class HardwareTestbot
         grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
         bar = myOpMode.hardwareMap.get(Servo.class, "bar");
 
-        grab.setPosition(0.5);
-        bar.setPosition(1);
+        grab.setPosition(0.25);
+        bar.setPosition(0.5);
 
         //encoderState("off");
         //encoderState("run");
@@ -132,5 +132,4 @@ public class HardwareTestbot
             RRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
- }
-
+}

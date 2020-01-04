@@ -42,7 +42,7 @@ public class GyroMath {
     }
     public void gyroDrive(double forw, double side, double target, double time){
         runtime.reset();
-        while(runtime.seconds()<time ) {
+        while(runtime.seconds()<time){
             if(target == 0)
                 myRobot.move2D(forw, side, 0);
             else

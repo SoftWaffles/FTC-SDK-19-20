@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
-@TeleOp(name="DRIVE-MODE", group="testbot")
+@TeleOp(name="DRIVE-MODE-ANDRIOD", group="testbot")
 //@Disabled
 public class TeleTestbot extends LinearOpMode {
 
@@ -67,14 +67,14 @@ public class TeleTestbot extends LinearOpMode {
         }
         if(y && !wasY){
             if(robot.bar.getPosition() == 1){
-                robot.grab.setPosition(0);
+                robot.bar.setPosition(0);
             }else {
-                robot.grab.setPosition(1);
+                robot.bar.setPosition(1);
             }
         }
         if(b && !wasB){
             if(robot.grab.getPosition() == 1){
-                robot.grab.setPosition(0.4);
+                robot.grab.setPosition(0.6);
             }else{
                 robot.grab.setPosition(1);
             }
@@ -149,4 +149,3 @@ public class TeleTestbot extends LinearOpMode {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 }
-
