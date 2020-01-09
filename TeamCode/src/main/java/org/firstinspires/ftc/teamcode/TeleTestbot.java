@@ -59,11 +59,11 @@ public class TeleTestbot extends LinearOpMode {
     }
     void buttons(boolean LBump, boolean RBump, double LTrig, double RTrig, boolean b, boolean y){
         if(RBump || LBump){
-            robot.Arm.setPower(-0.5);
+            robot.lift.setPower(-0.5);
         }else if((LTrig + RTrig) != 0){
-            robot.Arm.setPower(0.1);
+            robot.lift.setPower(0.1);
         }else{
-            robot.Arm.setPower(0.0);
+            robot.lift.setPower(0.0);
         }
         if(y && !wasY){
             if(robot.bar.getPosition() == 1){

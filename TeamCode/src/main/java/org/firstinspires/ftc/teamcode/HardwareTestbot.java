@@ -27,10 +27,10 @@ public class HardwareTestbot
     public DcMotor FRight  = null;
     public DcMotor RLeft   = null;
     public DcMotor RRight  = null;
-    // motor for arm
+    // motor for lift
     public Servo   grab    = null;
     public Servo   bar     = null;
-    public DcMotor Arm     = null;
+    public DcMotor lift     = null;
 
     //motor powers
     public double MAX_POWER = 0.8;
@@ -63,7 +63,7 @@ public class HardwareTestbot
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
         RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
-        Arm = myOpMode.hardwareMap.get(DcMotor.class,"arm");
+        lift = myOpMode.hardwareMap.get(DcMotor.class,"lift");
         grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
         bar = myOpMode.hardwareMap.get(Servo.class, "bar");
 
@@ -84,14 +84,14 @@ public class HardwareTestbot
         RLeft.setDirection(DcMotor.Direction.REVERSE);
         RRight.setDirection(DcMotor.Direction.REVERSE);
 
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Arm.setPower(0);
+        lift.setPower(0);
         FLeft.setPower(0);
         FRight.setPower(0);
         RLeft.setPower(0);
         RRight.setPower(0);
-        //Arm.setZeroPowerBehavior;
+        //lift.setZeroPowerBehavior;
     }
     public void move2D(double forw, double side, double spin) {
         double FLPow = -forw + side + spin;
