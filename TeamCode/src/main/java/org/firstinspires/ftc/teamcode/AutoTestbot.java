@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name="AUTO-DRIVE-SIMPLE-ONBOT", group="testbot")
-@Disabled
+//@Disabled
 public class AutoTestbot extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -25,7 +25,7 @@ public class AutoTestbot extends LinearOpMode {
         runtime.reset();
         //run loop while button pressed
         while (opModeIsActive() && runtime.seconds() < 29 && !isStopRequested()) {
-            gyro.gyroDrive(0.0,0.0,90,10);
+            robot.distanceDrive(0,12,0.3);
             teleUpdate();
             break;
         }

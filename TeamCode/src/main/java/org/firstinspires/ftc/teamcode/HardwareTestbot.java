@@ -58,15 +58,15 @@ public class HardwareTestbot
         RLeft = myOpMode.hardwareMap.get(DcMotor.class, "RLeft");
         RRight = myOpMode.hardwareMap.get(DcMotor.class, "RRight");
 
-        lift = myOpMode.hardwareMap.get(DcMotor.class,"lift");
-        grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
-        gSpin  = myOpMode.hardwareMap.get(DcMotor.class, "gSpin");
+        //lift = myOpMode.hardwareMap.get(DcMotor.class,"lift");
+        //grab  = myOpMode.hardwareMap.get(Servo.class, "grab");
+        //gSpin  = myOpMode.hardwareMap.get(DcMotor.class, "gSpin");
         bar1 = myOpMode.hardwareMap.get(Servo.class, "bar1");
         bar2 = myOpMode.hardwareMap.get(Servo.class, "bar2");
 
-        grab.setPosition(0.5);
-        bar1.setPosition(0.5);
-        bar2.setPosition(0.5);
+        //grab.setPosition(0.5);
+        bar1.setPosition(0.6);
+        bar2.setPosition(0.8);
 
         encoderState("run");
         //Brakes the Motors
@@ -75,10 +75,10 @@ public class HardwareTestbot
         RLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        gSpin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //gSpin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lift.setPower(0);
+        //lift.setPower(0);
         FLeft.setPower(0);
         FRight.setPower(0);
         RLeft.setPower(0);
@@ -109,17 +109,17 @@ public class HardwareTestbot
     public void distanceDrive(double forw_inches, double side_inches, double speed){
         int move = 0;
         if(side_inches == 0 && forw_inches != 0){
-             move = (int)(Math.round(forw_inches * 87));
-            FLeft.setTargetPosition(FLeft.getCurrentPosition() + move);
+            move = (int)(Math.round(forw_inches * 387));
+            FLeft.setTargetPosition(FLeft.getCurrentPosition() - move);
             FRight.setTargetPosition(FRight.getCurrentPosition() + move);
-            RLeft.setTargetPosition(RLeft.getCurrentPosition() + move);
+            RLeft.setTargetPosition(RLeft.getCurrentPosition() - move);
             RRight.setTargetPosition(RRight.getCurrentPosition() + move);
         }else{
             move = (int)(Math.round(side_inches *87));
             FLeft.setTargetPosition(FLeft.getCurrentPosition() + move);
-            FRight.setTargetPosition(FRight.getCurrentPosition() - move);
+            FRight.setTargetPosition(FRight.getCurrentPosition() + move);
             RLeft.setTargetPosition(RLeft.getCurrentPosition() - move);
-            RRight.setTargetPosition(RRight.getCurrentPosition() + move);
+            RRight.setTargetPosition(RRight.getCurrentPosition() - move);
         }
         FLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
